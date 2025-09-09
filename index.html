@@ -1,54 +1,116 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Pakistan Traffic Camera Hub</title>
-  <style>
-    body { font-family: Arial, sans-serif; background:#222; color:#fff; text-align:center; margin:0; padding:20px; }
-    input, select { padding:10px; font-size:16px; margin:10px; }
-    .frame-container { width:80%; margin:20px auto; }
-    iframe { width:100%; height:400px; border:0; border-radius:10px; }
-  </style>
-</head>
-<body>
-  <h1>Live Traffic Cameras - Pakistan</h1>
-  <p>Select a city to view its map & traffic cam:</p>
-  <select id="city" onchange="loadCity()">
-    <option value="">-- Select City --</option>
-    <option value="lahore">Lahore</option>
-    <option value="islamabad">Islamabad</option>
-    <option value="karachi">Karachi</option>
-  </select>
+data:text/html;charset=utf-8,
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pakistan Public Camera Hub</title>
+<style>body{font-family:Arial,Helvetica,sans-serif;background:#0f1115;color:#eef; margin:0}header{padding:14px;text-align:center;background:#0b0e14}h1{margin:0;font-size:18px}main{padding:12px}select{padding:10px;border-radius:8px;border:1px solid #333;background:#111;color:#fff} .frame{width:100%;max-width:980px;margin:14px auto;border-radius:10px;overflow:hidden;background:#000}iframe{width:100%;height:420px;border:0} .note{max-width:980px;margin:8px auto;color:#9aa}</style>
+</head><body>
+<header><h1>🇵🇰 Pakistan — Public Camera Hub</h1><div style="color:#9aa;margin-top:6px">Select a city below to view map & public cameras (legal public feeds only)</div></header>
+<main>
+<div style="text-align:center;margin:10px 0">
+<select id="city" onchange="loadCity()">
+<option value="">— choose a city —</option>
+<option value="lahore">Lahore</option>
+<option value="karachi">Karachi</option>
+<option value="islamabad">Islamabad</option>
+<option value="multan">Multan</option>
+<option value="faisalabad">Faisalabad</option>
+<option value="rawalpindi">Rawalpindi</option>
+<option value="peshawar">Peshawar</option>
+<option value="quetta">Quetta</option>
+<option value="sahiwal">Sahiwal</option>
+<option value="haroonabad">Haroonabad</option>
+<option value="bahawalpur">Bahawalpur</option>
+<option value="sialkot">Sialkot</option>
+</select>
+</div>
 
-  <div class="frame-container">
-    <iframe id="map" src=""></iframe>
-  </div>
-  <div class="frame-container">
-    <iframe id="cam" src=""></iframe>
-  </div>
+<div class="frame" id="mapWrap"><iframe id="mapFrame" src=""></iframe></div>
+<div class="frame" id="camWrap"><iframe id="camFrame" src=""></iframe></div>
+<div class="note">If a feed doesn't load, that source may be offline or not embeddable — try another city.</div>
+</main>
 
-  <script>
-    const sources = {
-      "lahore": {
-        map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3523.5115078200933!2d74.3556535!3d31.5497294",
-        cam: "https://www.pictimo.com/pakistan/lahore/1676/webcam-lahore-street-view"
-      },
-      "islamabad": {
-        map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3242.703144008495!2d73.0478775!3d33.684421",
-        cam: "https://www.pictimo.com/pakistan/islamabad/28996/webcam-live-webcam-view-islamabad"
-      },
-      "karachi": {
-        map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3659.7674328386216!2d67.0099441!3d24.8614622",
-        cam: "https://www.pictimo.com/pakistan/karachi"
-      }
-    };
+<script>
+/* Public/embed sources: maps via Google embed (no API key), cams via public directories like Pictimo / YouTube embed / city cam pages */
+const CITY_SOURCES = {
+  "lahore": {
+    map: "https://www.google.com/maps?q=Lahore+Pakistan&output=embed",
+    cam: "https://www.pictimo.com/pakistan/lahore/1676/webcam-lahore-street-view"
+  },
+  "karachi": {
+    map: "https://www.google.com/maps?q=Karachi+Pakistan&output=embed",
+    cam: "https://www.pictimo.com/pakistan/karachi"
+  },
+  "islamabad": {
+    map: "https://www.google.com/maps?q=Islamabad+Pakistan&output=embed",
+    cam: "https://www.pictimo.com/pakistan/islamabad/28996/webcam-live-webcam-view-islamabad"
+  },
+  "multan": {
+    map: "https://www.google.com/maps?q=Multan+Pakistan&output=embed",
+    cam: "https://www.webcamgalore.com/en/search/multan"
+  },
+  "faisalabad": {
+    map: "https://www.google.com/maps?q=Faisalabad+Pakistan&output=embed",
+    cam: "https://www.webcams.travel/en/pakistan/faisalabad"
+  },
+  "rawalpindi": {
+    map: "https://www.google.com/maps?q=Rawalpindi+Pakistan&output=embed",
+    cam: "https://www.pictimo.com/pakistan/rawalpindi"
+  },
+  "peshawar": {
+    map: "https://www.google.com/maps?q=Peshawar+Pakistan&output=embed",
+    cam: "https://www.webcams.travel/en/pakistan/peshawar"
+  },
+  "quetta": {
+    map: "https://www.google.com/maps?q=Quetta+Pakistan&output=embed",
+    cam: "https://www.webcams.travel/en/pakistan/quetta"
+  },
+  "sahiwal": {
+    map: "https://www.google.com/maps?q=Sahiwal+Pakistan&output=embed",
+    cam: "https://www.pictimo.com/pakistan/sahiwal"
+  },
+  "haroonabad": {
+    map: "https://www.google.com/maps?q=Haroonabad+Pakistan&output=embed",
+    cam: "https://www.youtube.com/embed/5kqIhS00Vjw" 
+  },
+  "bahawalpur": {
+    map: "https://www.google.com/maps?q=Bahawalpur+Pakistan&output=embed",
+    cam: "https://www.webcamgalore.com/en/search/bahawalpur"
+  },
+  "sialkot": {
+    map: "https://www.google.com/maps?q=Sialkot+Pakistan&output=embed",
+    cam: "https://www.webcams.travel/en/pakistan/sialkot"
+  }
+};
 
-    function loadCity(){
-      const city = document.getElementById("city").value;
-      if (!sources[city]) return;
-      document.getElementById("map").src = sources[city].map;
-      document.getElementById("cam").src = sources[city].cam;
-    }
-  </script>
-</body>
-</html>
+/* When user chooses city, update map and cam frames */
+function loadCity(){
+  const sel = document.getElementById('city');
+  const key = sel.value;
+  const mapF = document.getElementById('mapFrame');
+  const camF = document.getElementById('camFrame');
+  if(!key){ mapF.src=''; camF.src=''; return; }
+  const src = CITY_SOURCES[key];
+  if(!src){ mapF.src=''; camF.src=''; return; }
+  mapF.src = src.map;
+  camF.src = src.cam;
+}
+
+/* Try to auto-open nearest city by rough geolocation (best-effort) */
+if(navigator.geolocation){
+  navigator.geolocation.getCurrentPosition(function(p){
+    const lat = p.coords.latitude, lon = p.coords.longitude;
+    // rough boxes for Pakistan cities
+    if(lat>31 && lat<32 && lon>74 && lon<75) selectAndLoad('lahore');
+    else if(lat>24 && lat<25 && lon>66 && lon<68) selectAndLoad('karachi');
+    else if(lat>33 && lat<34 && lon>73 && lon<74) selectAndLoad('islamabad');
+    else if(lat>30.2 && lat<30.5 && lon>71 && lon<72.5) selectAndLoad('multan');
+    else if(lat>31.3 && lat<31.6 && lon>73 && lon<73.2) selectAndLoad('sahiwal');
+    // else do nothing automatically
+  }, function(e){
+    /* location denied - no auto load */
+  }, {timeout:7000});
+}
+function selectAndLoad(k){
+  document.getElementById('city').value = k;
+  loadCity();
+}
+</script>
+</body></html>
