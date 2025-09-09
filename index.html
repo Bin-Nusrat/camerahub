@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CameraHub - Live Feeds</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #222;
+      padding: 15px;
+      font-size: 1.5em;
+    }
+    .feed-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 15px;
+      padding: 20px;
+    }
+    iframe {
+      width: 100%;
+      height: 250px;
+      border: none;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    🌍 CameraHub – Live Feeds for <span id="city">Loading...</span>
+  </header>
+
+  <div class="feed-container" id="feeds">
+    <p>Loading public feeds...</p>
+  </div>
+
+  <script>
+    // Detect location
+    function detectLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+        document.getElementById("city").innerText = "Unknown (No GPS)";
+      }
+    }
+
+    // Mock city lookup + feeds
+    function showPosition(position) {
+      let lat = position.coords.latitude;
+      let lon = position.coords.longitude;
+
+      // Very rough location -> city matching
+      let city = "Your Area";
+      if (lat > 30 && lat < 32 && lon > 72 && lon < 74) city = "Lahore";
+      else if (lat > 30.6 && lat < 31.0 && lon > 72.9 && lon < 73.4) city = "Sahiwal";
+      else if (lat > 29 && lat < 30 && lon > 73 && lon < 74) city = "Haroonabad";
+
+      document.getElementById("city").innerText = city;
+
+      loadFeeds(city);
+    }
+
+    function showError(error) {
+      document.getElementById("city").innerText = "Unknown Location";
+      loadFeeds("default");
+    }
+
+    // Load feeds based on city
+    function loadFeeds(city) {
+      const feeds = {
+        "Lahore": [
+          "https://www.youtube.com/embed/live_stream?channel=UCYfdidRxbB8Qhf0Nx7ioOYw", // Demo stream
+          "https://www.youtube.com/embed/live_stream?channel=UCl8dMTqDrJQ0c8y23UBu4kQ"
+        ],
+        "Sahiwal": [
+          "https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_LjQHig"
+        ],
+        "Haroonabad": [
+          "https://www.youtube.com/embed/live_stream?channel=UC16niRr50-MSBwiO3YDb3RA"
+        ],
+        "default": [
+          "https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_LjQHig"
+        ]
+      };
+
+      const container = document.getElementById("feeds");
+      container.innerHTML = "";
+
+      (feeds[city] || feeds["default"]).forEach(url => {
+        let iframe = document.createElement("iframe");
+        iframe.src = url;
+        container.appendChild(iframe);
+      });
+    }
+
+    // Run on load
+    detectLocation();
+  </script>
+</body>
+</html>
