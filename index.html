@@ -2,105 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CameraHub - Live Feeds</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>City Camera Hub</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
       text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #222;
-      padding: 15px;
-      font-size: 1.5em;
-    }
-    .feed-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 15px;
+      background: #f2f2f2;
       padding: 20px;
     }
+    select {
+      padding: 10px;
+      font-size: 16px;
+      margin: 20px;
+    }
     iframe {
-      width: 100%;
-      height: 250px;
+      margin: 15px 0;
+      border-radius: 8px;
       border: none;
-      border-radius: 12px;
     }
   </style>
 </head>
 <body>
-  <header>
-    🌍 CameraHub – Live Feeds for <span id="city">Loading...</span>
-  </header>
+  <h1>📹 City Camera Hub</h1>
+  <p>Select a city to view its map and cameras:</p>
 
-  <div class="feed-container" id="feeds">
-    <p>Loading public feeds...</p>
-  </div>
+  <select id="citySelector" onchange="loadCity()">
+    <option value="">-- Select City --</option>
+    <option value="lahore">Lahore</option>
+    <option value="sahiwal">Sahiwal</option>
+    <option value="haroonabad">Haroonabad</option>
+  </select>
+
+  <div id="mapContainer"></div>
+  <div id="cameraContainer"></div>
 
   <script>
-    // Detect location
-    function detectLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
-      } else {
-        document.getElementById("city").innerText = "Unknown (No GPS)";
+    function loadCity() {
+      const city = document.getElementById("citySelector").value;
+      const mapContainer = document.getElementById("mapContainer");
+      const cameraContainer = document.getElementById("cameraContainer");
+
+      mapContainer.innerHTML = "";
+      cameraContainer.innerHTML = "";
+
+      if (city === "lahore") {
+        mapContainer.innerHTML = `<iframe src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=Lahore,Pakistan" width="600" height="400" allowfullscreen></iframe>`;
+        cameraContainer.innerHTML = `
+          <h3>Live Cameras in Lahore</h3>
+          <iframe width="600" height="340" src="https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_LjQHig" allowfullscreen></iframe>
+        `;
+      } else if (city === "sahiwal") {
+        mapContainer.innerHTML = `<iframe src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=Sahiwal,Pakistan" width="600" height="400" allowfullscreen></iframe>`;
+        cameraContainer.innerHTML = `
+          <h3>Live Cameras in Sahiwal</h3>
+          <p>No direct live feeds available yet.</p>
+        `;
+      } else if (city === "haroonabad") {
+        mapContainer.innerHTML = `<iframe src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=Haroonabad,Pakistan" width="600" height="400" allowfullscreen></iframe>`;
+        cameraContainer.innerHTML = `
+          <h3>Live Cameras in Haroonabad</h3>
+          <p>No direct live feeds available yet.</p>
+        `;
       }
     }
-
-    // Mock city lookup + feeds
-    function showPosition(position) {
-      let lat = position.coords.latitude;
-      let lon = position.coords.longitude;
-
-      // Very rough location -> city matching
-      let city = "Your Area";
-      if (lat > 30 && lat < 32 && lon > 72 && lon < 74) city = "Lahore";
-      else if (lat > 30.6 && lat < 31.0 && lon > 72.9 && lon < 73.4) city = "Sahiwal";
-      else if (lat > 29 && lat < 30 && lon > 73 && lon < 74) city = "Haroonabad";
-
-      document.getElementById("city").innerText = city;
-
-      loadFeeds(city);
-    }
-
-    function showError(error) {
-      document.getElementById("city").innerText = "Unknown Location";
-      loadFeeds("default");
-    }
-
-    // Load feeds based on city
-    function loadFeeds(city) {
-      const feeds = {
-        "Lahore": [
-          "https://www.youtube.com/embed/live_stream?channel=UCYfdidRxbB8Qhf0Nx7ioOYw", // Demo stream
-          "https://www.youtube.com/embed/live_stream?channel=UCl8dMTqDrJQ0c8y23UBu4kQ"
-        ],
-        "Sahiwal": [
-          "https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_LjQHig"
-        ],
-        "Haroonabad": [
-          "https://www.youtube.com/embed/live_stream?channel=UC16niRr50-MSBwiO3YDb3RA"
-        ],
-        "default": [
-          "https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_LjQHig"
-        ]
-      };
-
-      const container = document.getElementById("feeds");
-      container.innerHTML = "";
-
-      (feeds[city] || feeds["default"]).forEach(url => {
-        let iframe = document.createElement("iframe");
-        iframe.src = url;
-        container.appendChild(iframe);
-      });
-    }
-
-    // Run on load
-    detectLocation();
   </script>
 </body>
 </html>
