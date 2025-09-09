@@ -2,69 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>City Camera Hub</title>
+  <title>Pakistan Traffic Camera Hub</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f2f2f2;
-      padding: 20px;
-    }
-    select {
-      padding: 10px;
-      font-size: 16px;
-      margin: 20px;
-    }
-    iframe {
-      margin: 15px 0;
-      border-radius: 8px;
-      border: none;
-    }
+    body { font-family: Arial, sans-serif; background:#222; color:#fff; text-align:center; margin:0; padding:20px; }
+    input, select { padding:10px; font-size:16px; margin:10px; }
+    .frame-container { width:80%; margin:20px auto; }
+    iframe { width:100%; height:400px; border:0; border-radius:10px; }
   </style>
 </head>
 <body>
-  <h1>📹 City Camera Hub</h1>
-  <p>Select a city to view its map and cameras:</p>
-
-  <select id="citySelector" onchange="loadCity()">
+  <h1>Live Traffic Cameras - Pakistan</h1>
+  <p>Select a city to view its map & traffic cam:</p>
+  <select id="city" onchange="loadCity()">
     <option value="">-- Select City --</option>
     <option value="lahore">Lahore</option>
-    <option value="sahiwal">Sahiwal</option>
-    <option value="haroonabad">Haroonabad</option>
+    <option value="islamabad">Islamabad</option>
+    <option value="karachi">Karachi</option>
   </select>
 
-  <div id="mapContainer"></div>
-  <div id="cameraContainer"></div>
+  <div class="frame-container">
+    <iframe id="map" src=""></iframe>
+  </div>
+  <div class="frame-container">
+    <iframe id="cam" src=""></iframe>
+  </div>
 
   <script>
-    function loadCity() {
-      const city = document.getElementById("citySelector").value;
-      const mapContainer = document.getElementById("mapContainer");
-      const cameraContainer = document.getElementById("cameraContainer");
-
-      mapContainer.innerHTML = "";
-      cameraContainer.innerHTML = "";
-
-      if (city === "lahore") {
-        mapContainer.innerHTML = `<iframe src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=Lahore,Pakistan" width="600" height="400" allowfullscreen></iframe>`;
-        cameraContainer.innerHTML = `
-          <h3>Live Cameras in Lahore</h3>
-          <iframe width="600" height="340" src="https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_LjQHig" allowfullscreen></iframe>
-        `;
-      } else if (city === "sahiwal") {
-        mapContainer.innerHTML = `<iframe src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=Sahiwal,Pakistan" width="600" height="400" allowfullscreen></iframe>`;
-        cameraContainer.innerHTML = `
-          <h3>Live Cameras in Sahiwal</h3>
-          <p>No direct live feeds available yet.</p>
-        `;
-      } else if (city === "haroonabad") {
-        mapContainer.innerHTML = `<iframe src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=Haroonabad,Pakistan" width="600" height="400" allowfullscreen></iframe>`;
-        cameraContainer.innerHTML = `
-          <h3>Live Cameras in Haroonabad</h3>
-          <p>No direct live feeds available yet.</p>
-        `;
+    const sources = {
+      "lahore": {
+        map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3523.5115078200933!2d74.3556535!3d31.5497294",
+        cam: "https://www.pictimo.com/pakistan/lahore/1676/webcam-lahore-street-view"
+      },
+      "islamabad": {
+        map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3242.703144008495!2d73.0478775!3d33.684421",
+        cam: "https://www.pictimo.com/pakistan/islamabad/28996/webcam-live-webcam-view-islamabad"
+      },
+      "karachi": {
+        map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3659.7674328386216!2d67.0099441!3d24.8614622",
+        cam: "https://www.pictimo.com/pakistan/karachi"
       }
+    };
+
+    function loadCity(){
+      const city = document.getElementById("city").value;
+      if (!sources[city]) return;
+      document.getElementById("map").src = sources[city].map;
+      document.getElementById("cam").src = sources[city].cam;
     }
   </script>
 </body>
